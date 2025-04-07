@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Container,
@@ -13,10 +13,10 @@ import {
   MenuItem,
   List,
   ListItem,
-  ListItemText,
   Divider,
   Collapse,
   IconButton,
+  Chip,
 } from '@mui/material';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import DesktopWindowsIcon from '@mui/icons-material/DesktopWindows';
@@ -36,6 +36,60 @@ const ConsoleSelection = () => {
   const [date, setDate] = useState('');
   const [bookings, setBookings] = useState([]);
 
+  const fetchBookings = useCallback(async (bookingDate) => {
+    try {
+      const res = await axios.get(`http://localhost:5000/api/bookings/parlour/${parlourId}?date=${bookingDate}`);
+      setBookings(res.data.data || []);
+    } catch (err) {
+      console.error('Failed to fetch bookings:', err);
+    }
+  }, [parlourId]);
+
+  const fetchDevices = useCallback(async (bookingDate) => {
+    try {
+      const res = await axios.get(`http://localhost:5000/api/devices/available/${parlourId}?date=${bookingDate}`);
+      console.log('Devices response:', res.data.data); // Debug log
+      
+      // Process devices and their time slots
+      const processedDevices = res.data.data.map(device => ({
+        ...device,
+        consoleUnits: device.consoleUnits.map(unit => {
+          // Get bookings for this unit
+          const unitBookings = bookings.filter(b => b.consoleUnit === unit.consoleId);
+          
+          // Generate all possible time slots
+          const allTimeSlots = [];
+          for (let hour = 10; hour <= 22; hour++) {
+            const startTime = `${hour.toString().padStart(2, '0')}:00`;
+            const endTime = `${(hour + 1).toString().padStart(2, '0')}:00`;
+            
+            // Check if this slot is booked
+            const isBooked = unitBookings.some(booking => 
+              booking.startTime === startTime && booking.endTime === endTime
+            );
+            
+            allTimeSlots.push({
+              startTime,
+              endTime,
+              isBooked
+            });
+          }
+          
+          return {
+            ...unit,
+            timeSlots: allTimeSlots
+          };
+        })
+      }));
+      
+      setDevices(processedDevices);
+      setLoading(false);
+    } catch (err) {
+      toast.error('Failed to fetch available devices');
+      setLoading(false);
+    }
+  }, [parlourId, bookings]);
+
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
     const bookingDate = searchParams.get('date');
@@ -44,128 +98,14 @@ const ConsoleSelection = () => {
       return;
     }
     setDate(bookingDate);
-    fetchDevices(bookingDate);
-  }, [parlourId, navigate]);
+    fetchBookings(bookingDate);
+  }, [parlourId, navigate, fetchBookings]);
 
   useEffect(() => {
     if (date) {
       fetchDevices(date);
-      fetchBookings();
     }
-  }, [date]);
-
-  const fetchDevices = async (bookingDate) => {
-    try {
-      const res = await axios.get(`http://localhost:5000/api/devices/available/${parlourId}?date=${bookingDate}`);
-      setDevices(res.data.data);
-      setLoading(false);
-    } catch (err) {
-      toast.error('Failed to fetch available devices');
-      setLoading(false);
-    }
-  };
-
-  const fetchBookings = async () => {
-    try {
-      const res = await axios.get(`http://localhost:5000/api/bookings/parlour/${parlourId}?date=${date}`);
-      setBookings(res.data.data);
-    } catch (err) {
-      console.error('Error fetching bookings:', err);
-    }
-  };
-
-  const generateTimeSlots = () => {
-    const slots = [];
-    for (let hour = 10; hour <= 22; hour++) {
-      slots.push(`${hour.toString().padStart(2, '0')}:00`);
-    }
-    return slots;
-  };
-
-  const isTimeSlotAvailable = (consoleUnit, timeSlot) => {
-    // Check if console unit is in maintenance
-    if (consoleUnit.status === 'maintenance') {
-      return false;
-    }
-
-    // Check if there are any existing bookings for this console unit
-    const existingBookings = bookings.filter(
-      booking => 
-        booking.consoleUnit === consoleUnit.consoleUnitId &&
-        booking.date === date
-    );
-
-    // Check if the time slot overlaps with any existing booking
-    const isBooked = existingBookings.some(booking => {
-      const bookingStart = new Date(`2000-01-01T${booking.startTime}`);
-      const bookingEnd = new Date(`2000-01-01T${booking.endTime}`);
-      const slotStart = new Date(`2000-01-01T${timeSlot}`);
-      const slotEnd = new Date(`2000-01-01T${timeSlot}`);
-      slotEnd.setHours(slotEnd.getHours() + 1);
-
-      return (
-        (slotStart >= bookingStart && slotStart < bookingEnd) ||
-        (slotEnd > bookingStart && slotEnd <= bookingEnd) ||
-        (slotStart <= bookingStart && slotEnd >= bookingEnd)
-      );
-    });
-
-    return !isBooked;
-  };
-
-  const getTimeSlotStatus = (consoleUnit, timeSlot) => {
-    if (consoleUnit.status === 'maintenance') {
-      return 'Maintenance';
-    }
-
-    const existingBookings = bookings.filter(
-      booking => 
-        booking.consoleUnit === consoleUnit.consoleUnitId &&
-        booking.date === date
-    );
-
-    const isBooked = existingBookings.some(booking => {
-      const bookingStart = new Date(`2000-01-01T${booking.startTime}`);
-      const bookingEnd = new Date(`2000-01-01T${booking.endTime}`);
-      const slotStart = new Date(`2000-01-01T${timeSlot}`);
-      const slotEnd = new Date(`2000-01-01T${timeSlot}`);
-      slotEnd.setHours(slotEnd.getHours() + 1);
-
-      return (
-        (slotStart >= bookingStart && slotStart < bookingEnd) ||
-        (slotEnd > bookingStart && slotEnd <= bookingEnd) ||
-        (slotStart <= bookingStart && slotEnd >= bookingEnd)
-      );
-    });
-
-    return isBooked ? 'Booked' : 'Available';
-  };
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'available':
-        return 'success.main';
-      case 'booked':
-        return 'error.main';
-      case 'maintenance':
-        return 'warning.main';
-      default:
-        return 'text.secondary';
-    }
-  };
-
-  const getStatusText = (status) => {
-    switch (status) {
-      case 'available':
-        return 'Available';
-      case 'booked':
-        return 'Booked';
-      case 'maintenance':
-        return 'Under Maintenance';
-      default:
-        return 'Unknown';
-    }
-  };
+  }, [date, fetchDevices]);
 
   const handleDeviceExpand = (deviceId) => {
     setExpandedDevice(expandedDevice === deviceId ? null : deviceId);
@@ -180,18 +120,9 @@ const ConsoleSelection = () => {
 
   const handleBooking = async (device, consoleUnit) => {
     try {
-      const timeSlot = selectedTimeSlots[consoleUnit.consoleUnitId];
+      const timeSlot = selectedTimeSlots[consoleUnit.consoleId];
       if (!timeSlot) {
         toast.error('Please select a time slot');
-        return;
-      }
-
-      const [startTime] = timeSlot.split('-');
-      const endTime = `${parseInt(startTime.split(':')[0]) + 1}:00`;
-
-      // Check if the time slot is still available
-      if (!isTimeSlotAvailable(consoleUnit, timeSlot)) {
-        toast.error('This time slot is no longer available');
         return;
       }
 
@@ -199,13 +130,24 @@ const ConsoleSelection = () => {
         parlour: parlourId,
         device: device._id,
         date: date,
-        startTime: startTime,
-        endTime: endTime,
-        consoleUnit: consoleUnit.consoleUnitId
+        startTime: timeSlot.startTime,
+        endTime: timeSlot.endTime,
+        consoleUnit: consoleUnit.consoleId
       };
 
       await axios.post('http://localhost:5000/api/bookings', bookingPayload);
       toast.success('Booking successful!');
+      
+      // Refresh the data after successful booking
+      await fetchBookings(date);
+      await fetchDevices(date);
+      
+      // Clear the selected time slot
+      setSelectedTimeSlots(prev => ({
+        ...prev,
+        [consoleUnit.consoleId]: undefined
+      }));
+      
       navigate('/bookings');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Booking failed');
@@ -293,10 +235,10 @@ const ConsoleSelection = () => {
                             </Typography>
                             <Typography 
                               variant="body2" 
-                              color={getStatusColor(unit.status)}
+                              color={unit.status === 'maintenance' ? 'warning.main' : 'success.main'}
                               sx={{ fontWeight: 'medium' }}
                             >
-                              Status: {getStatusText(unit.status)}
+                              Status: {unit.status === 'maintenance' ? 'Under Maintenance' : 'Available'}
                             </Typography>
                           </Box>
                           
@@ -305,44 +247,38 @@ const ConsoleSelection = () => {
                               <FormControl sx={{ minWidth: 200 }}>
                                 <InputLabel>Time Slot</InputLabel>
                                 <Select
-                                  value={selectedTimeSlots[unit.consoleId] || ''}
-                                  onChange={(e) => handleTimeSlotSelect(unit.consoleId, e.target.value)}
+                                  value={selectedTimeSlots[unit.consoleId]?.startTime || ''}
+                                  onChange={(e) => {
+                                    const selectedSlot = unit.timeSlots.find(
+                                      slot => slot.startTime === e.target.value
+                                    );
+                                    handleTimeSlotSelect(unit.consoleId, selectedSlot);
+                                  }}
                                   label="Time Slot"
                                 >
-                                  {generateTimeSlots().map((time) => {
-                                    const status = getTimeSlotStatus(unit, time);
-                                    const isAvailable = status === 'Available';
-                                    return (
-                                      <MenuItem 
-                                        key={time} 
-                                        value={time}
-                                        disabled={!isAvailable}
-                                        sx={{
-                                          display: 'flex',
-                                          justifyContent: 'space-between',
-                                          alignItems: 'center',
-                                          opacity: isAvailable ? 1 : 0.5
-                                        }}
-                                      >
-                                        <Box>
-                                          {time} - {`${parseInt(time.split(':')[0]) + 1}:00`}
-                                        </Box>
-                                        <Typography 
-                                          variant="caption" 
-                                          color={isAvailable ? 'success.main' : 'error.main'}
-                                          sx={{ ml: 2 }}
-                                        >
-                                          {status}
-                                        </Typography>
-                                      </MenuItem>
-                                    );
-                                  })}
+                                  {unit.timeSlots.map((slot) => (
+                                    <MenuItem 
+                                      key={slot.startTime} 
+                                      value={slot.startTime}
+                                      disabled={slot.isBooked}
+                                    >
+                                      {slot.startTime} - {slot.endTime}
+                                      {slot.isBooked && (
+                                        <Chip 
+                                          label="Booked" 
+                                          size="small" 
+                                          color="error" 
+                                          sx={{ ml: 1 }}
+                                        />
+                                      )}
+                                    </MenuItem>
+                                  ))}
                                 </Select>
                               </FormControl>
                               <Button
                                 variant="contained"
                                 onClick={() => handleBooking(device, unit)}
-                                disabled={!selectedTimeSlots[unit.consoleId]}
+                                disabled={!selectedTimeSlots[unit.consoleId] || selectedTimeSlots[unit.consoleId].isBooked}
                               >
                                 Book Now
                               </Button>

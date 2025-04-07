@@ -125,19 +125,47 @@ exports.getAvailableDevices = asyncHandler(async (req, res, next) => {
             }));
 
         const availableConsoleUnits = device.consoleUnits.map(unit => {
-            const isBooked = bookedConsoleUnits.some(booked => 
+            const unitBookings = bookedConsoleUnits.filter(booked => 
                 booked.consoleId === unit.consoleId
             );
+
+            // Generate all possible time slots for the day
+            const timeSlots = [];
+            for (let hour = 10; hour <= 22; hour++) {
+                const startTime = `${hour.toString().padStart(2, '0')}:00`;
+                const endTime = `${(hour + 1).toString().padStart(2, '0')}:00`;
+                
+                // Check if this time slot is booked
+                const isBooked = unitBookings.some(booking => {
+                    const bookingStart = new Date(`2000-01-01T${booking.startTime}`);
+                    const bookingEnd = new Date(`2000-01-01T${booking.endTime}`);
+                    const slotStart = new Date(`2000-01-01T${startTime}`);
+                    const slotEnd = new Date(`2000-01-01T${endTime}`);
+
+                    return (
+                        (slotStart >= bookingStart && slotStart < bookingEnd) ||
+                        (slotEnd > bookingStart && slotEnd <= bookingEnd) ||
+                        (slotStart <= bookingStart && slotEnd >= bookingEnd)
+                    );
+                });
+
+                if (!isBooked) {
+                    timeSlots.push({
+                        startTime,
+                        endTime
+                    });
+                }
+            }
             
             return {
                 ...unit.toObject(),
-                isBooked
+                availableTimeSlots: timeSlots
             };
         });
 
         return {
             ...device.toObject(),
-            availableConsoleUnits: availableConsoleUnits.filter(unit => !unit.isBooked)
+            consoleUnits: availableConsoleUnits
         };
     });
 
