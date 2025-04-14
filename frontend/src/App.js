@@ -10,7 +10,7 @@ import PrivateRoute from './components/routing/PrivateRoute';
 
 // Pages
 import Home from './pages/Home';
-import Login from './pages/auth/Login';
+import Login from './pages/Login';
 import Register from './pages/auth/Register';
 import GamingParlours from './pages/GamingParlours';
 import Bookings from './pages/Bookings';

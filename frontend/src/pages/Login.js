@@ -7,6 +7,7 @@ import {
   Paper,
   Grid,
   TextField,
+  Divider,
   IconButton,
   InputAdornment,
   useTheme,
@@ -21,21 +22,19 @@ import {
   ArrowBack,
 } from '@mui/icons-material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import AnimatedPage from '../../components/AnimatedPage';
-import { useAuth } from '../../context/AuthContext';
+import AnimatedPage from '../components/AnimatedPage';
+import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 
-const Register = () => {
+const Login = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
-  const { register } = useAuth();
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    username: '',
     email: '',
     password: '',
-    confirmPassword: '',
   });
 
   const handleChange = (e) => {
@@ -49,13 +48,12 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { confirmPassword, ...userData } = formData;
-      const success = await register(userData);
+      const success = await login(formData.email, formData.password);
       if (success) {
         navigate('/');
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Registration failed');
+      toast.error(error.response?.data?.message || 'Login failed');
     }
   };
 
@@ -101,16 +99,16 @@ const Register = () => {
                     </Typography>
                   </Box>
                   <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, mb: 2 }}>
-                    Join Our Community
+                    Welcome Back!
                   </Typography>
                   <Typography variant="body1" color="text.secondary" paragraph>
-                    Create an account to book gaming consoles, track your bookings, and join our gaming community.
+                    Login to your account to book gaming consoles and manage your bookings.
                   </Typography>
                 </Box>
               </Fade>
             </Grid>
 
-            {/* Right side - Register form */}
+            {/* Right side - Login form */}
             <Grid item xs={12} md={7}>
               <Slide direction="up" in timeout={1000}>
                 <Paper
@@ -163,19 +161,8 @@ const Register = () => {
                         textAlign: 'center',
                       }}
                     >
-                      Create Account
+                      Welcome Back
                     </Typography>
-                    <TextField
-                      fullWidth
-                      label="Username"
-                      name="username"
-                      value={formData.username}
-                      onChange={handleChange}
-                      margin="normal"
-                      required
-                      variant="outlined"
-                      sx={{ mb: 2 }}
-                    />
                     <TextField
                       fullWidth
                       label="Email Address"
@@ -211,18 +198,6 @@ const Register = () => {
                           </InputAdornment>
                         ),
                       }}
-                      sx={{ mb: 2 }}
-                    />
-                    <TextField
-                      fullWidth
-                      label="Confirm Password"
-                      name="confirmPassword"
-                      type={showPassword ? 'text' : 'password'}
-                      value={formData.confirmPassword}
-                      onChange={handleChange}
-                      margin="normal"
-                      required
-                      variant="outlined"
                       sx={{ mb: 3 }}
                     />
                     <Button
@@ -233,18 +208,18 @@ const Register = () => {
                       size="large"
                       sx={{ mb: 3, py: 1.5 }}
                     >
-                      Sign Up
+                      Login
                     </Button>
 
                     <Typography variant="body2" align="center" color="text.secondary">
-                      Already have an account?{' '}
+                      Don't have an account?{' '}
                       <Button
                         component={RouterLink}
-                        to="/login"
+                        to="/register"
                         color="primary"
                         sx={{ textTransform: 'none' }}
                       >
-                        Login
+                        Sign Up
                       </Button>
                     </Typography>
                   </form>
@@ -258,4 +233,4 @@ const Register = () => {
   );
 };
 
-export default Register; 
+export default Login; 
