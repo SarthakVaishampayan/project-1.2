@@ -44,6 +44,38 @@ const Home = () => {
   const [showConsoles, setShowConsoles] = useState(false);
   const [showCTA, setShowCTA] = useState(false);
   const [animatedElements, setAnimatedElements] = useState([]);
+  const [activeCard, setActiveCard] = useState(null);
+
+  const features = [
+    {
+      icon: <SportsEsportsIcon sx={{ fontSize: 40 }} />,
+      title: "Premium Gaming Consoles",
+      description: "Experience gaming at its finest with our top-of-the-line consoles and accessories.",
+      color: "#7c4dff",
+      hoverEffect: "scale(1.05) rotate(5deg)",
+    },
+    {
+      icon: <AccessTimeIcon sx={{ fontSize: 40 }} />,
+      title: "Flexible Booking",
+      description: "Book your gaming session at your convenience with our easy scheduling system.",
+      color: "#ff4081",
+      hoverEffect: "scale(1.05) rotate(-5deg)",
+    },
+    {
+      icon: <LocationOnIcon sx={{ fontSize: 40 }} />,
+      title: "Secure Environment",
+      description: "Play in a safe, well-maintained space with regular sanitization.",
+      color: "#00bcd4",
+      hoverEffect: "scale(1.05) translateY(-10px)",
+    },
+    {
+      icon: <AccessTimeIcon sx={{ fontSize: 40 }} />,
+      title: "Competitive Pricing",
+      description: "Enjoy premium gaming at affordable rates with special member discounts.",
+      color: "#ff9800",
+      hoverEffect: "scale(1.05) translateX(10px)",
+    },
+  ];
 
   useEffect(() => {
     fetchFeaturedParlours();
@@ -97,26 +129,8 @@ const Home = () => {
     }
   };
 
-  const features = [
-    {
-      icon: <SportsEsportsIcon sx={{ fontSize: 40 }} />,
-      title: 'Premium Gaming Consoles',
-      description: 'Access to latest gaming consoles including PS5, Xbox Series X, and more',
-    },
-    {
-      icon: <AccessTimeIcon sx={{ fontSize: 40 }} />,
-      title: 'Flexible Booking',
-      description: 'Book your gaming session at your convenience with our easy scheduling system',
-    },
-    {
-      icon: <LocationOnIcon sx={{ fontSize: 40 }} />,
-      title: 'Multiple Locations',
-      description: 'Find gaming parlours near you with our extensive network of locations',
-    },
-  ];
-
   return (
-    <Box>
+    <Box sx={{ bgcolor: '#121212', minHeight: '100vh' }}>
       {/* Animated gaming elements */}
       {animatedElements.map((element) => (
         <Box
@@ -154,16 +168,7 @@ const Home = () => {
           alignItems: 'center',
           justifyContent: 'center',
           overflow: 'hidden',
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'linear-gradient(135deg, rgba(18, 18, 18, 0.9) 0%, rgba(124, 77, 255, 0.3) 100%)',
-            zIndex: 1,
-          },
+          background: 'linear-gradient(135deg, rgba(18, 18, 18, 0.9) 0%, rgba(124, 77, 255, 0.3) 100%)',
         }}
       >
         <Fade in={showHero} timeout={1000}>
@@ -246,36 +251,76 @@ const Home = () => {
           </Box>
         </Slide>
 
-        <Grid container spacing={4}>
+        <Grid container spacing={4} justifyContent="center">
           {features.map((feature, index) => (
-            <Grid item key={index} xs={12} md={4}>
-              <Paper
+            <Grid item xs={12} sm={6} md={3} key={index}>
+              <Card
+                className="gaming-card"
                 sx={{
-                  p: 3,
                   height: '100%',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  textAlign: 'center',
+                  p: 3,
+                  background: 'rgba(18, 18, 18, 0.8)',
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(124, 77, 255, 0.2)',
+                  transition: 'all 0.3s ease',
+                  transform: activeCard === index ? feature.hoverEffect : 'none',
+                  '&:hover': {
+                    transform: feature.hoverEffect,
+                    boxShadow: `0 0 20px ${feature.color}40`,
+                  },
                 }}
+                onMouseEnter={() => setActiveCard(index)}
+                onMouseLeave={() => setActiveCard(null)}
               >
-                <Box sx={{ color: 'primary.main', mb: 2 }}>
+                <Box
+                  sx={{
+                    width: 80,
+                    height: 80,
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    mb: 2,
+                    background: `linear-gradient(135deg, ${feature.color} 0%, ${feature.color}80 100%)`,
+                    boxShadow: `0 0 20px ${feature.color}40`,
+                    animation: 'pulse 2s infinite',
+                  }}
+                >
                   {feature.icon}
                 </Box>
-                <Typography variant="h5" component="h3" gutterBottom>
+                <Typography
+                  variant="h5"
+                  component="h3"
+                  gutterBottom
+                  sx={{
+                    color: 'white',
+                    fontWeight: 600,
+                    textAlign: 'center',
+                    mb: 2,
+                  }}
+                >
                   {feature.title}
                 </Typography>
-                <Typography color="text.secondary">
+                <Typography
+                  variant="body1"
+                  sx={{
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    textAlign: 'center',
+                  }}
+                >
                   {feature.description}
                 </Typography>
-              </Paper>
+              </Card>
             </Grid>
           ))}
         </Grid>
       </Container>
 
       {/* Featured Parlours Section */}
-      <Box sx={{ py: 8, bgcolor: 'background.paper' }}>
+      <Box sx={{ py: 8 }}>
         <Container maxWidth="lg">
           <Slide direction="up" in={showConsoles} timeout={1000}>
             <Box sx={{ mb: 6, textAlign: 'center' }}>
@@ -308,6 +353,9 @@ const Home = () => {
                       height: '100%',
                       display: 'flex',
                       flexDirection: 'column',
+                      background: 'rgba(18, 18, 18, 0.8)',
+                      backdropFilter: 'blur(10px)',
+                      border: '1px solid rgba(124, 77, 255, 0.2)',
                       transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
                       '&:hover': {
                         transform: 'translateY(-10px)',
@@ -323,7 +371,7 @@ const Home = () => {
                       alt={parlour.name}
                     />
                     <CardContent sx={{ flexGrow: 1 }}>
-                      <Typography gutterBottom variant="h5" component="h3" sx={{ fontWeight: 600 }} className="heading-font">
+                      <Typography gutterBottom variant="h5" component="h3" sx={{ fontWeight: 600, color: 'white' }} className="heading-font">
                         {parlour.name}
                       </Typography>
                       <Typography color="text.secondary">
@@ -360,8 +408,9 @@ const Home = () => {
             sx={{
               p: 6,
               textAlign: 'center',
-              background: 'linear-gradient(135deg, rgba(124, 77, 255, 0.1) 0%, rgba(255, 64, 129, 0.1) 100%)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              background: 'rgba(18, 18, 18, 0.8)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(124, 77, 255, 0.2)',
               borderRadius: 2,
             }}
           >
