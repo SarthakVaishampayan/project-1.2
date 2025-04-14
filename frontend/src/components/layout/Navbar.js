@@ -33,18 +33,61 @@ const Navbar = () => {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar 
+      position="static"
+      sx={{
+        background: 'linear-gradient(135deg, rgba(18, 18, 18, 0.9) 0%, rgba(124, 77, 255, 0.3) 100%)',
+        boxShadow: 'none',
+      }}
+    >
       <Toolbar>
-        <Typography variant="h6" component={RouterLink} to="/" sx={{ flexGrow: 1, textDecoration: 'none', color: 'white' }}>
-          Gaming Console Booking
+        <Typography
+          variant="h6"
+          component={RouterLink}
+          to="/"
+          sx={{
+            flexGrow: 1,
+            textDecoration: 'none',
+            color: 'white',
+            fontWeight: 700,
+            fontSize: '1.5rem',
+            letterSpacing: '1px',
+            '&:hover': {
+              color: '#7c4dff',
+              transition: 'color 0.3s ease',
+            },
+          }}
+          className="heading-font"
+        >
+          BookYourGAME
         </Typography>
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <Button color="inherit" component={RouterLink} to="/parlours">
+        <Box>
+          <Button 
+            color="inherit" 
+            component={RouterLink} 
+            to="/parlours"
+            sx={{
+              '&:hover': {
+                color: '#7c4dff',
+                transition: 'color 0.3s ease',
+              },
+            }}
+          >
             Gaming Parlours
           </Button>
           {user ? (
             <>
-              <Button color="inherit" component={RouterLink} to="/bookings">
+              <Button 
+                color="inherit" 
+                component={RouterLink} 
+                to="/bookings"
+                sx={{
+                  '&:hover': {
+                    color: '#7c4dff',
+                    transition: 'color 0.3s ease',
+                  },
+                }}
+              >
                 My Bookings
               </Button>
               <IconButton
@@ -54,6 +97,12 @@ const Navbar = () => {
                 aria-haspopup="true"
                 onClick={handleMenu}
                 color="inherit"
+                sx={{
+                  '&:hover': {
+                    color: '#7c4dff',
+                    transition: 'color 0.3s ease',
+                  },
+                }}
               >
                 <AccountCircle />
               </IconButton>
@@ -80,10 +129,30 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <Button color="inherit" component={RouterLink} to="/login">
+              <Button 
+                color="inherit" 
+                component={RouterLink} 
+                to="/login"
+                sx={{
+                  '&:hover': {
+                    color: '#7c4dff',
+                    transition: 'color 0.3s ease',
+                  },
+                }}
+              >
                 Login
               </Button>
-              <Button color="inherit" component={RouterLink} to="/register">
+              <Button 
+                color="inherit" 
+                component={RouterLink} 
+                to="/register"
+                sx={{
+                  '&:hover': {
+                    color: '#7c4dff',
+                    transition: 'color 0.3s ease',
+                  },
+                }}
+              >
                 Register
               </Button>
             </>
