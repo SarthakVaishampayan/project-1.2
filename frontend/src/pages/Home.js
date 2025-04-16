@@ -164,7 +164,7 @@ const Home = () => {
       <Box
         sx={{
           position: 'relative',
-          height: '80vh',
+          height: { xs: '60vh', md: '80vh' },
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -173,14 +173,14 @@ const Home = () => {
         }}
       >
         <Fade in={showHero} timeout={1000}>
-          <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2, textAlign: 'center' }}>
+          <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2, textAlign: 'center', px: { xs: 2, md: 3 } }}>
             <Typography
               variant="h1"
               component="h1"
               gutterBottom
               sx={{
                 fontWeight: 700,
-                fontSize: { xs: '2.5rem', md: '4rem' },
+                fontSize: { xs: '2rem', sm: '2.5rem', md: '4rem' },
                 background: 'linear-gradient(45deg, #7c4dff 30%, #ff4081 90%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
@@ -201,6 +201,8 @@ const Home = () => {
                 mb: 4,
                 maxWidth: '800px',
                 mx: 'auto',
+                fontSize: { xs: '1rem', sm: '1.25rem', md: '1.5rem' },
+                px: { xs: 2, md: 0 }
               }}
               className="heading-font"
             >
@@ -213,13 +215,14 @@ const Home = () => {
               onClick={handleBookNow}
               startIcon={<SportsEsportsIcon />}
               sx={{
-                py: 2,
-                px: 4,
+                py: { xs: 1.5, md: 2 },
+                px: { xs: 3, md: 4 },
                 borderRadius: 2,
                 boxShadow: '0 0 15px rgba(255, 64, 129, 0.5)',
                 '&:hover': {
                   boxShadow: '0 0 20px rgba(255, 64, 129, 0.7)',
                 },
+                fontSize: { xs: '0.875rem', md: '1rem' }
               }}
             >
               Browse Gaming Parlours
@@ -229,9 +232,9 @@ const Home = () => {
       </Box>
 
       {/* Features Section */}
-      <Container maxWidth="lg" sx={{ py: 8 }}>
+      <Container maxWidth="lg" sx={{ py: { xs: 4, md: 8 } }}>
         <Slide direction="up" in={showFeatures} timeout={1000}>
-          <Box sx={{ mb: 6, textAlign: 'center' }}>
+          <Box sx={{ mb: { xs: 4, md: 6 }, textAlign: 'center' }}>
             <Typography
               variant="h3"
               component="h2"
@@ -241,18 +244,29 @@ const Home = () => {
                 background: 'linear-gradient(45deg, #7c4dff 30%, #ff4081 90%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
+                fontSize: { xs: '2rem', md: '2.5rem' }
               }}
               className="heading-font"
             >
               Why Choose Us
             </Typography>
-            <Typography variant="h6" color="text.secondary" sx={{ maxWidth: '800px', mx: 'auto', mb: 4 }}>
+            <Typography 
+              variant="h6" 
+              color="text.secondary" 
+              sx={{ 
+                maxWidth: '800px', 
+                mx: 'auto', 
+                mb: 4,
+                fontSize: { xs: '1rem', md: '1.25rem' },
+                px: { xs: 2, md: 0 }
+              }}
+            >
               Experience gaming like never before with our premium booking service
             </Typography>
           </Box>
         </Slide>
 
-        <Grid container spacing={4} justifyContent="center">
+        <Grid container spacing={{ xs: 2, md: 4 }} justifyContent="center">
           {features.map((feature, index) => (
             <Grid item xs={12} sm={6} md={3} key={index}>
               <Card
@@ -262,7 +276,7 @@ const Home = () => {
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  p: 3,
+                  p: { xs: 2, md: 3 },
                   background: 'rgba(18, 18, 18, 0.8)',
                   backdropFilter: 'blur(10px)',
                   border: '1px solid rgba(124, 77, 255, 0.2)',
@@ -278,8 +292,8 @@ const Home = () => {
               >
                 <Box
                   sx={{
-                    width: 80,
-                    height: 80,
+                    width: { xs: 60, md: 80 },
+                    height: { xs: 60, md: 80 },
                     borderRadius: '50%',
                     display: 'flex',
                     alignItems: 'center',
@@ -301,6 +315,7 @@ const Home = () => {
                     fontWeight: 600,
                     textAlign: 'center',
                     mb: 2,
+                    fontSize: { xs: '1.1rem', md: '1.25rem' }
                   }}
                 >
                   {feature.title}
@@ -310,6 +325,7 @@ const Home = () => {
                   sx={{
                     color: 'rgba(255, 255, 255, 0.7)',
                     textAlign: 'center',
+                    fontSize: { xs: '0.875rem', md: '1rem' }
                   }}
                 >
                   {feature.description}
@@ -321,10 +337,10 @@ const Home = () => {
       </Container>
 
       {/* Featured Parlours Section */}
-      <Box sx={{ py: 8 }}>
+      <Box sx={{ py: { xs: 4, md: 8 } }}>
         <Container maxWidth="lg">
           <Slide direction="up" in={showConsoles} timeout={1000}>
-            <Box sx={{ mb: 6, textAlign: 'center' }}>
+            <Box sx={{ mb: { xs: 4, md: 6 }, textAlign: 'center' }}>
               <Typography
                 variant="h3"
                 component="h2"
@@ -334,20 +350,31 @@ const Home = () => {
                   background: 'linear-gradient(45deg, #7c4dff 30%, #ff4081 90%)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
+                  fontSize: { xs: '2rem', md: '2.5rem' }
                 }}
                 className="heading-font"
               >
                 Featured Gaming Parlours
               </Typography>
-              <Typography variant="h6" color="text.secondary" sx={{ maxWidth: '800px', mx: 'auto', mb: 4 }}>
+              <Typography 
+                variant="h6" 
+                color="text.secondary" 
+                sx={{ 
+                  maxWidth: '800px', 
+                  mx: 'auto', 
+                  mb: 4,
+                  fontSize: { xs: '1rem', md: '1.25rem' },
+                  px: { xs: 2, md: 0 }
+                }}
+              >
                 Check out our selection of premium gaming parlours
               </Typography>
             </Box>
           </Slide>
 
-          <Grid container spacing={4}>
+          <Grid container spacing={{ xs: 2, md: 4 }}>
             {featuredParlours.map((parlour, index) => (
-              <Grid item key={parlour._id} xs={12} md={4}>
+              <Grid item key={parlour._id} xs={12} sm={6} md={4}>
                 <Zoom in={showConsoles} timeout={1000} style={{ transitionDelay: `${index * 200}ms` }}>
                   <Card
                     sx={{
@@ -370,29 +397,31 @@ const Home = () => {
                       height="200"
                       image={parlour.image || 'https://via.placeholder.com/300x200'}
                       alt={parlour.name}
+                      sx={{
+                        height: { xs: 180, md: 200 },
+                        objectFit: 'cover'
+                      }}
                     />
-                    <CardContent sx={{ flexGrow: 1 }}>
-                      <Typography gutterBottom variant="h5" component="h3" sx={{ fontWeight: 600, color: 'white' }} className="heading-font">
+                    <CardContent sx={{ p: { xs: 2, md: 3 } }}>
+                      <Typography 
+                        gutterBottom 
+                        variant="h5" 
+                        component="div"
+                        sx={{
+                          fontSize: { xs: '1.1rem', md: '1.25rem' }
+                        }}
+                      >
                         {parlour.name}
                       </Typography>
-                      <Typography color="text.secondary">
+                      <Typography 
+                        variant="body2" 
+                        color="text.secondary"
+                        sx={{
+                          fontSize: { xs: '0.875rem', md: '1rem' }
+                        }}
+                      >
                         {parlour.description}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                        Location: {parlour.location}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Price per hour: ${parlour.pricePerHour}
-                      </Typography>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        sx={{ mt: 2 }}
-                        onClick={() => navigate('/parlours')}
-                      >
-                        View Details
-                      </Button>
                     </CardContent>
                   </Card>
                 </Zoom>
@@ -402,12 +431,12 @@ const Home = () => {
         </Container>
       </Box>
 
-      {/* Call to Action Section */}
-      <Container maxWidth="lg" sx={{ py: 8 }}>
+      {/* CTA Section */}
+      <Container maxWidth="lg" sx={{ py: { xs: 4, md: 8 } }}>
         <Fade in={showCTA} timeout={1000}>
           <Paper
             sx={{
-              p: 6,
+              p: { xs: 3, md: 6 },
               textAlign: 'center',
               background: 'rgba(18, 18, 18, 0.8)',
               backdropFilter: 'blur(10px)',
@@ -424,12 +453,23 @@ const Home = () => {
                 background: 'linear-gradient(45deg, #7c4dff 30%, #ff4081 90%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
+                fontSize: { xs: '2rem', md: '2.5rem' }
               }}
               className="heading-font"
             >
               Ready to Game?
             </Typography>
-            <Typography variant="h6" color="text.secondary" sx={{ mb: 4, maxWidth: '800px', mx: 'auto' }}>
+            <Typography 
+              variant="h6" 
+              color="text.secondary" 
+              sx={{ 
+                mb: 4, 
+                maxWidth: '800px', 
+                mx: 'auto',
+                fontSize: { xs: '1rem', md: '1.25rem' },
+                px: { xs: 2, md: 0 }
+              }}
+            >
               Sign up now and get access to exclusive gaming parlours and consoles
             </Typography>
             <Button
@@ -439,13 +479,14 @@ const Home = () => {
               onClick={() => navigate('/register')}
               startIcon={<SportsEsportsIcon />}
               sx={{
-                py: 2,
-                px: 4,
+                py: { xs: 1.5, md: 2 },
+                px: { xs: 3, md: 4 },
                 borderRadius: 2,
                 boxShadow: '0 0 15px rgba(255, 64, 129, 0.5)',
                 '&:hover': {
                   boxShadow: '0 0 20px rgba(255, 64, 129, 0.7)',
                 },
+                fontSize: { xs: '0.875rem', md: '1rem' }
               }}
             >
               Sign Up Now
