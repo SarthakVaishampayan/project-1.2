@@ -18,6 +18,8 @@ import {
   IconButton,
   Chip,
 } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import { motion } from 'framer-motion';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import DesktopWindowsIcon from '@mui/icons-material/DesktopWindows';
 import LaptopIcon from '@mui/icons-material/Laptop';
@@ -26,6 +28,41 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import config from '../config';
+
+const StyledPaper = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(2),
+  background: 'rgba(18, 18, 18, 0.95)',
+  backdropFilter: 'blur(10px)',
+  border: '1px solid rgba(124, 77, 255, 0.2)',
+  borderRadius: theme.shape.borderRadius * 2,
+  transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
+  '&:hover': {
+    transform: 'translateY(-5px)',
+    boxShadow: '0 8px 32px rgba(124, 77, 255, 0.2)',
+  },
+}));
+
+const StyledSelect = styled(Select)(({ theme }) => ({
+  '& .MuiOutlinedInput-notchedOutline': {
+    borderColor: 'rgba(124, 77, 255, 0.3)',
+  },
+  '&:hover .MuiOutlinedInput-notchedOutline': {
+    borderColor: 'rgba(124, 77, 255, 0.5)',
+  },
+  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+    borderColor: theme.palette.primary.main,
+  },
+  '& .MuiSelect-select': {
+    color: '#fff',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  '& .MuiInputLabel-root': {
+    color: 'rgba(255, 255, 255, 0.7)',
+  },
+  '& .MuiSvgIcon-root': {
+    color: 'rgba(255, 255, 255, 0.7)',
+  },
+}));
 
 const ConsoleSelection = () => {
   const { parlourId } = useParams();
@@ -36,15 +73,26 @@ const ConsoleSelection = () => {
   const [selectedTimeSlots, setSelectedTimeSlots] = useState({});
   const [date, setDate] = useState('');
   const [bookings, setBookings] = useState([]);
+  const [isLoadingBookings, setIsLoadingBookings] = useState(false);
 
-  const fetchBookings = useCallback(async (bookingDate) => {
+  const fetchBookings = useCallback(async (parlourId, date) => {
+    setIsLoadingBookings(true);
     try {
-      const res = await axios.get(`${config.apiUrl}/api/bookings/parlour/${parlourId}?date=${bookingDate}`);
-      setBookings(res.data.data || []);
-    } catch (err) {
-      console.error('Failed to fetch bookings:', err);
+      const response = await axios.get(
+        `${config.apiUrl}/api/bookings/parlour/${parlourId}?date=${date}`
+      );
+      setBookings(response.data.data || []);
+    } catch (error) {
+      console.error('Error fetching bookings:', error);
+      toast.error(
+        error.response?.data?.message || 
+        'Failed to fetch bookings. Please try again later.'
+      );
+      setBookings([]);
+    } finally {
+      setIsLoadingBookings(false);
     }
-  }, [parlourId]);
+  }, []);
 
   const fetchDevices = useCallback(async (bookingDate) => {
     try {
@@ -99,7 +147,7 @@ const ConsoleSelection = () => {
       return;
     }
     setDate(bookingDate);
-    fetchBookings(bookingDate);
+    fetchBookings(parlourId, bookingDate);
   }, [parlourId, navigate, fetchBookings]);
 
   useEffect(() => {
@@ -140,7 +188,7 @@ const ConsoleSelection = () => {
       toast.success('Booking successful!');
       
       // Refresh the data after successful booking
-      await fetchBookings(date);
+      await fetchBookings(parlourId, date);
       await fetchDevices(date);
       
       // Clear the selected time slot
@@ -175,128 +223,247 @@ const ConsoleSelection = () => {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Select Your Console
-      </Typography>
-      <Typography variant="subtitle1" gutterBottom>
-        Date: {new Date(date).toLocaleDateString()}
-      </Typography>
-      
-      <Grid container spacing={3} sx={{ mt: 2 }}>
-        {devices.map((device) => (
-          <Grid item xs={12} key={device._id}>
-            <Paper
-              elevation={3}
-              sx={{
-                p: 2,
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
-              <Box 
-                sx={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'space-between',
-                  cursor: 'pointer'
-                }}
-                onClick={() => handleDeviceExpand(device._id)}
-              >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                  {getConsoleIcon(device.type)}
-                  <Box>
-                    <Typography variant="h6">{device.name}</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Type: {device.type}
-                    </Typography>
-                  </Box>
-                </Box>
-                <IconButton>
-                  {expandedDevice === device._id ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                </IconButton>
-              </Box>
+    <Box
+      component={motion.div}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      sx={{
+        minHeight: '100vh',
+        py: 4,
+        background: `linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9)),
+          url('https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-1.2.1&auto=format&fit=crop&w=2850&q=80')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+      }}
+    >
+      <Container maxWidth="lg">
+        <Typography
+          variant="h3"
+          gutterBottom
+          sx={{
+            fontWeight: 700,
+            color: 'white',
+            textAlign: 'center',
+            mb: 4,
+            background: 'linear-gradient(45deg, #7c4dff 30%, #ff4081 90%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}
+        >
+          Select Your Console
+        </Typography>
+        <Typography
+          variant="h6"
+          gutterBottom
+          sx={{
+            color: 'white',
+            textAlign: 'center',
+            mb: 4,
+            background: 'linear-gradient(45deg, #7c4dff 30%, #ff4081 90%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            fontWeight: 'bold',
+            fontSize: '1.5rem',
+            textShadow: '0 2px 4px rgba(0,0,0,0.2)',
+            p: 2,
+            borderRadius: 2,
+            bgcolor: 'rgba(0, 0, 0, 0.7)',
+            border: '1px solid rgba(124, 77, 255, 0.2)',
+          }}
+        >
+          Date: {new Date(date).toLocaleDateString('en-US', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          })}
+        </Typography>
 
-              <Collapse in={expandedDevice === device._id}>
-                <Box sx={{ mt: 2 }}>
-                  <List>
-                    {device.consoleUnits.map((unit) => (
-                      <React.Fragment key={unit.consoleId}>
-                        <ListItem
-                          sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'flex-start',
-                            gap: 2
-                          }}
-                        >
-                          <Box sx={{ width: '100%' }}>
-                            <Typography variant="subtitle1">
-                              Console Unit {unit.consoleId}
-                            </Typography>
-                            <Typography 
-                              variant="body2" 
-                              color={unit.status === 'maintenance' ? 'warning.main' : 'success.main'}
-                              sx={{ fontWeight: 'medium' }}
+        {isLoadingBookings ? (
+          <div className="flex justify-center items-center p-4">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        ) : (
+          <Grid container spacing={3}>
+            {devices.map((device) => (
+              <Grid item xs={12} key={device._id}>
+                <StyledPaper>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => handleDeviceExpand(device._id)}
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      {getConsoleIcon(device.type)}
+                      <Box>
+                        <Typography variant="h6" sx={{ color: 'white' }}>
+                          {device.name}
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                          Type: {device.type}
+                        </Typography>
+                      </Box>
+                    </Box>
+                    <IconButton sx={{ color: 'white' }}>
+                      {expandedDevice === device._id ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                    </IconButton>
+                  </Box>
+
+                  <Collapse in={expandedDevice === device._id}>
+                    <Box sx={{ mt: 2 }}>
+                      <List>
+                        {device.consoleUnits.map((unit) => (
+                          <React.Fragment key={unit.consoleId}>
+                            <ListItem
+                              sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'flex-start',
+                                gap: 2,
+                                bgcolor: 'rgba(0, 0, 0, 0.5)',
+                                borderRadius: 1,
+                                mb: 1,
+                                border: '1px solid rgba(124, 77, 255, 0.2)',
+                              }}
                             >
-                              Status: {unit.status === 'maintenance' ? 'Under Maintenance' : 'Available'}
-                            </Typography>
-                          </Box>
-                          
-                          {unit.status === 'available' && (
-                            <Box sx={{ width: '100%', display: 'flex', gap: 2, alignItems: 'center' }}>
-                              <FormControl sx={{ minWidth: 200 }}>
-                                <InputLabel>Time Slot</InputLabel>
-                                <Select
-                                  value={selectedTimeSlots[unit.consoleId]?.startTime || ''}
-                                  onChange={(e) => {
-                                    const selectedSlot = unit.timeSlots.find(
-                                      slot => slot.startTime === e.target.value
-                                    );
-                                    handleTimeSlotSelect(unit.consoleId, selectedSlot);
-                                  }}
-                                  label="Time Slot"
+                              <Box sx={{ width: '100%' }}>
+                                <Typography variant="subtitle1" sx={{ color: 'white' }}>
+                                  Console Unit {unit.consoleId}
+                                </Typography>
+                                <Typography
+                                  variant="body2"
+                                  color={unit.status === 'maintenance' ? 'warning.main' : 'success.main'}
+                                  sx={{ fontWeight: 'medium' }}
                                 >
-                                  {unit.timeSlots.map((slot) => (
-                                    <MenuItem 
-                                      key={slot.startTime} 
-                                      value={slot.startTime}
-                                      disabled={slot.isBooked}
+                                  Status: {unit.status === 'maintenance' ? 'Under Maintenance' : 'Available'}
+                                </Typography>
+                              </Box>
+
+                              {unit.status === 'available' && (
+                                <Box sx={{ width: '100%', display: 'flex', gap: 2, alignItems: 'center' }}>
+                                  <FormControl sx={{ minWidth: 200 }}>
+                                    <InputLabel sx={{ color: 'white' }}>
+                                      Time Slot
+                                    </InputLabel>
+                                    <StyledSelect
+                                      value={selectedTimeSlots[unit.consoleId]?.startTime || ''}
+                                      onChange={(e) => {
+                                        const selectedSlot = unit.timeSlots.find(
+                                          (slot) => slot.startTime === e.target.value
+                                        );
+                                        handleTimeSlotSelect(unit.consoleId, selectedSlot);
+                                      }}
+                                      label="Time Slot"
+                                      MenuProps={{
+                                        PaperProps: {
+                                          sx: {
+                                            bgcolor: 'rgba(0, 0, 0, 0.9)',
+                                            '& .MuiMenuItem-root': {
+                                              color: 'white',
+                                              '&:hover': {
+                                                bgcolor: 'rgba(124, 77, 255, 0.2)',
+                                              },
+                                              '&.Mui-selected': {
+                                                bgcolor: 'rgba(124, 77, 255, 0.3)',
+                                                color: 'white',
+                                              },
+                                              '&.Mui-disabled': {
+                                                color: 'rgba(255, 255, 255, 0.3)',
+                                                bgcolor: 'rgba(255, 0, 0, 0.1)',
+                                              },
+                                            },
+                                          },
+                                        },
+                                      }}
                                     >
-                                      {slot.startTime} - {slot.endTime}
-                                      {slot.isBooked && (
-                                        <Chip 
-                                          label="Booked" 
-                                          size="small" 
-                                          color="error" 
-                                          sx={{ ml: 1 }}
-                                        />
-                                      )}
-                                    </MenuItem>
-                                  ))}
-                                </Select>
-                              </FormControl>
-                              <Button
-                                variant="contained"
-                                onClick={() => handleBooking(device, unit)}
-                                disabled={!selectedTimeSlots[unit.consoleId] || selectedTimeSlots[unit.consoleId].isBooked}
-                              >
-                                Book Now
-                              </Button>
-                            </Box>
-                          )}
-                        </ListItem>
-                        <Divider />
-                      </React.Fragment>
-                    ))}
-                  </List>
-                </Box>
-              </Collapse>
-            </Paper>
+                                      {unit.timeSlots.map((slot) => (
+                                        <MenuItem
+                                          key={slot.startTime}
+                                          value={slot.startTime}
+                                          disabled={slot.isBooked}
+                                          sx={{
+                                            color: 'white',
+                                            bgcolor: slot.isBooked ? '#ff0000' : 'transparent',
+                                            '&:hover': {
+                                              bgcolor: slot.isBooked ? '#ff3333' : 'rgba(124, 77, 255, 0.2)',
+                                            },
+                                            '&.Mui-selected': {
+                                              bgcolor: 'rgba(124, 77, 255, 0.3)',
+                                              color: 'white',
+                                            },
+                                            '&.Mui-selected:hover': {
+                                              bgcolor: 'rgba(124, 77, 255, 0.4)',
+                                            },
+                                            '&.Mui-disabled': {
+                                              color: 'white !important',
+                                              bgcolor: '#ff0000 !important',
+                                            },
+                                          }}
+                                        >
+                                          {slot.startTime} - {slot.endTime}
+                                          {slot.isBooked && (
+                                            <Chip
+                                              label="Booked"
+                                              size="small"
+                                              color="error"
+                                              sx={{ 
+                                                ml: 1,
+                                                bgcolor: '#ff0000',
+                                                color: 'white',
+                                                fontWeight: 'bold',
+                                                '&:hover': {
+                                                  bgcolor: '#ff3333',
+                                                }
+                                              }}
+                                            />
+                                          )}
+                                        </MenuItem>
+                                      ))}
+                                    </StyledSelect>
+                                  </FormControl>
+                                  <Button
+                                    variant="contained"
+                                    onClick={() => handleBooking(device, unit)}
+                                    disabled={
+                                      !selectedTimeSlots[unit.consoleId] ||
+                                      selectedTimeSlots[unit.consoleId].isBooked
+                                    }
+                                    sx={{
+                                      background: 'linear-gradient(45deg, #7c4dff 30%, #ff4081 90%)',
+                                      color: 'white',
+                                      '&:hover': {
+                                        background: 'linear-gradient(45deg, #6c3bff 30%, #ff2d7a 90%)',
+                                      },
+                                      '&.Mui-disabled': {
+                                        background: 'rgba(255, 255, 255, 0.12)',
+                                        color: 'rgba(255, 255, 255, 0.3)',
+                                      },
+                                    }}
+                                  >
+                                    Book Now
+                                  </Button>
+                                </Box>
+                              )}
+                            </ListItem>
+                            <Divider sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)' }} />
+                          </React.Fragment>
+                        ))}
+                      </List>
+                    </Box>
+                  </Collapse>
+                </StyledPaper>
+              </Grid>
+            ))}
           </Grid>
-        ))}
-      </Grid>
-    </Container>
+        )}
+      </Container>
+    </Box>
   );
 };
 
