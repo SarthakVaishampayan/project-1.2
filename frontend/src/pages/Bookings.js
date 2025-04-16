@@ -123,12 +123,17 @@ const Bookings = () => {
       transition={{ duration: 0.5 }}
       sx={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, rgba(18, 18, 18, 0.95) 0%, rgba(30, 30, 30, 0.95) 100%)',
+        background: `linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9)),
+          url('https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-1.2.1&auto=format&fit=crop&w=2850&q=80')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
         py: { xs: 4, md: 8 },
+        mt: '32px',
       }}
     >
       <Container maxWidth="lg">
-        <Box sx={{ mb: 6, textAlign: 'center' }}>
+        <Box sx={{ mb: 6, textAlign: 'center', mt: 2 }}>
           <Typography
             variant="h3"
             component="h1"
@@ -141,6 +146,7 @@ const Bookings = () => {
               display: 'inline-flex',
               alignItems: 'center',
               gap: 2,
+              textShadow: '0 2px 4px rgba(0,0,0,0.3)',
             }}
           >
             <SportsEsportsIcon sx={{ fontSize: 40 }} />
@@ -149,12 +155,13 @@ const Bookings = () => {
           <Typography
             variant="subtitle1"
             sx={{
-              color: 'text.secondary',
+              color: 'rgba(255, 255, 255, 0.8)',
               maxWidth: '600px',
               margin: '0 auto',
+              textShadow: '0 1px 2px rgba(0,0,0,0.3)',
             }}
           >
-            Track and manage your gaming sessions across all parlours
+            Manage your gaming sessions and bookings
           </Typography>
         </Box>
 

@@ -56,12 +56,16 @@ const Navbar = () => {
 
   return (
     <AppBar 
-      position="sticky" 
+      position="fixed" 
       sx={{ 
         background: 'rgba(10, 10, 15, 0.95)',
         backdropFilter: 'blur(10px)',
         borderBottom: '1px solid rgba(124, 77, 255, 0.2)',
         boxShadow: '0 4px 30px rgba(0, 0, 0, 0.5)',
+        borderRadius: 0,
+        '& .MuiPaper-root': {
+          borderRadius: 0,
+        }
       }}
     >
       <Container maxWidth="xl">

@@ -53,19 +53,6 @@ const StyledCard = styled(Card)(({ theme }) => ({
   },
 }));
 
-const PriceChip = styled(Chip)(({ theme }) => ({
-  position: 'absolute',
-  top: 16,
-  right: 16,
-  backgroundColor: 'rgba(124, 77, 255, 0.9)',
-  color: '#fff',
-  fontWeight: 600,
-  backdropFilter: 'blur(4px)',
-  '& .MuiChip-label': {
-    padding: '0 12px',
-  },
-}));
-
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialog-paper': {
     background: 'rgba(20, 20, 20, 0.95)',
@@ -137,12 +124,17 @@ const GamingParlours = () => {
       transition={{ duration: 0.5 }}
       sx={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, rgba(18, 18, 18, 0.95) 0%, rgba(30, 30, 30, 0.95) 100%)',
+        background: `linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9)),
+          url('https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-1.2.1&auto=format&fit=crop&w=2850&q=80')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
         py: { xs: 4, md: 8 },
+        mt: '32px',
       }}
     >
       <Container maxWidth="lg">
-        <Box sx={{ mb: 6, textAlign: 'center' }}>
+        <Box sx={{ mb: 6, textAlign: 'center', mt: 2 }}>
           <Typography
             variant="h3"
             component="h1"
@@ -155,6 +147,7 @@ const GamingParlours = () => {
               display: 'inline-flex',
               alignItems: 'center',
               gap: 2,
+              textShadow: '0 2px 4px rgba(0,0,0,0.3)',
             }}
           >
             <SportsEsportsIcon sx={{ fontSize: 40 }} />
@@ -163,9 +156,10 @@ const GamingParlours = () => {
           <Typography
             variant="subtitle1"
             sx={{
-              color: 'text.secondary',
+              color: 'rgba(255, 255, 255, 0.8)',
               maxWidth: '600px',
               margin: '0 auto',
+              textShadow: '0 1px 2px rgba(0,0,0,0.3)',
             }}
           >
             Discover and book the best gaming parlours in your area
@@ -182,12 +176,12 @@ const GamingParlours = () => {
                       <CardMedia
                         component="img"
                         height="200"
-                        image={parlour.image || 'https://source.unsplash.com/random/400x200/?gaming'}
+                        image={parlour.image || 'https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-1.2.1&auto=format&fit=crop&w=2850&q=80'}
                         alt={parlour.name}
-                      />
-                      <PriceChip
-                        label={`$${parlour.pricePerHour}/hr`}
-                        icon={<AccessTimeIcon />}
+                        sx={{
+                          objectFit: 'cover',
+                          filter: 'brightness(0.7)',
+                        }}
                       />
                     </Box>
                     <CardContent sx={{ flexGrow: 1 }}>
@@ -263,9 +257,13 @@ const GamingParlours = () => {
                 label="Date"
                 value={bookingData.date}
                 onChange={(e) => setBookingData({ ...bookingData, date: e.target.value })}
-                InputLabelProps={{ shrink: true }}
+                InputLabelProps={{ 
+                  shrink: true,
+                  sx: { color: 'primary.main' }
+                }}
                 sx={{
                   '& .MuiOutlinedInput-root': {
+                    color: 'primary.main',
                     '& fieldset': {
                       borderColor: 'rgba(124, 77, 255, 0.3)',
                     },
@@ -275,6 +273,15 @@ const GamingParlours = () => {
                     '&.Mui-focused fieldset': {
                       borderColor: 'primary.main',
                     },
+                  },
+                  '& input[type="date"]::-webkit-calendar-picker-indicator': {
+                    filter: 'invert(1)',
+                  },
+                  '& input[type="date"]::-webkit-datetime-edit': {
+                    color: 'primary.main',
+                  },
+                  '& input[type="date"]::-webkit-datetime-edit-fields-wrapper': {
+                    color: 'primary.main',
                   },
                 }}
               />
