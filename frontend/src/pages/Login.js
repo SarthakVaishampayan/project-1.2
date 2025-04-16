@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import {
   Box,
   Container,
@@ -7,11 +8,8 @@ import {
   Paper,
   Grid,
   TextField,
-  Divider,
   IconButton,
   InputAdornment,
-  useTheme,
-  useMediaQuery,
   Fade,
   Slide,
 } from '@mui/material';
@@ -21,14 +19,11 @@ import {
   SportsEsports,
   ArrowBack,
 } from '@mui/icons-material';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import AnimatedPage from '../components/AnimatedPage';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 
 const Login = () => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
@@ -50,6 +45,7 @@ const Login = () => {
     try {
       const success = await login(formData.email, formData.password);
       if (success) {
+        toast.success('Login successful!');
         navigate('/');
       }
     } catch (error) {
@@ -64,7 +60,11 @@ const Login = () => {
           minHeight: '100vh',
           display: 'flex',
           flexDirection: 'column',
-          background: 'linear-gradient(135deg, rgba(18, 18, 18, 0.9) 0%, rgba(30, 30, 30, 0.9) 100%)',
+          background: `linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
+            url('https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-1.2.1&auto=format&fit=crop&w=2850&q=80')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
           py: { xs: 4, md: 8 },
         }}
       >
@@ -72,11 +72,17 @@ const Login = () => {
           <Button
             startIcon={<ArrowBack />}
             onClick={() => navigate('/')}
-            sx={{ mb: 4 }}
+            sx={{ 
+              mb: 4,
+              color: 'white',
+              '&:hover': {
+                color: 'primary.main',
+              },
+            }}
           >
             Back to Home
           </Button>
-          
+
           <Grid container spacing={4} justifyContent="center" alignItems="center">
             {/* Left side - Welcome content */}
             <Grid item xs={12} md={5}>
@@ -98,7 +104,7 @@ const Login = () => {
                       BookYourGAME
                     </Typography>
                   </Box>
-                  <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, mb: 2 }}>
+                  <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, mb: 2, color: 'white' }}>
                     Welcome Back!
                   </Typography>
                   <Typography variant="body1" color="text.secondary" paragraph>
@@ -150,19 +156,19 @@ const Login = () => {
                     },
                   }}
                 >
+                  <Typography
+                    variant="h5"
+                    component="h2"
+                    sx={{
+                      mb: 3,
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      fontWeight: 600,
+                      textAlign: 'center',
+                    }}
+                  >
+                    Welcome Back
+                  </Typography>
                   <form onSubmit={handleSubmit}>
-                    <Typography
-                      variant="h5"
-                      component="h2"
-                      sx={{
-                        mb: 3,
-                        color: 'rgba(255, 255, 255, 0.9)',
-                        fontWeight: 600,
-                        textAlign: 'center',
-                      }}
-                    >
-                      Welcome Back
-                    </Typography>
                     <TextField
                       fullWidth
                       label="Email Address"
@@ -207,7 +213,14 @@ const Login = () => {
                       variant="contained"
                       color="primary"
                       size="large"
-                      sx={{ mb: 3, py: 1.5 }}
+                      sx={{ 
+                        mb: 3,
+                        py: 1.5,
+                        background: 'linear-gradient(45deg, #7c4dff 30%, #ff4081 90%)',
+                        '&:hover': {
+                          background: 'linear-gradient(45deg, #6c3bff 30%, #ff2d7a 90%)',
+                        },
+                      }}
                     >
                       Login
                     </Button>
