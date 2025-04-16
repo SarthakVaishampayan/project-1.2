@@ -22,6 +22,7 @@ import {
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
+import config from '../config';
 
 const GamingParlours = () => {
   const [parlours, setParlours] = useState([]);
@@ -40,7 +41,7 @@ const GamingParlours = () => {
 
   const fetchParlours = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/parlours');
+      const res = await axios.get(`${config.apiUrl}/api/parlours`);
       setParlours(res.data.data);
       setLoading(false);
     } catch (err) {
