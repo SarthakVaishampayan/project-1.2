@@ -24,6 +24,7 @@ import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import config from '../config';
 
 // Gaming elements for animation
 const gamingElements = [
@@ -114,7 +115,7 @@ const Home = () => {
 
   const fetchFeaturedParlours = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/parlours/featured');
+      const res = await axios.get(`${config.apiUrl}/api/parlours/featured`);
       setFeaturedParlours(res.data);
     } catch (err) {
       console.error('Failed to fetch featured parlours:', err);
