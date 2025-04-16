@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Container,
   Typography,
@@ -16,16 +17,19 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Chip,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import config from '../config';
 
 const Bookings = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [bookingToDelete, setBookingToDelete] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchBookings();
@@ -33,8 +37,8 @@ const Bookings = () => {
 
   const fetchBookings = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/users/bookings');
-      setBookings(res.data.data);
+      const res = await axios.get(`${config.apiUrl}/api/users/bookings`);
+      setBookings(res.data.data || []);
       setLoading(false);
     } catch (err) {
       toast.error('Failed to fetch bookings');
@@ -49,7 +53,7 @@ const Bookings = () => {
 
   const handleDeleteConfirm = async () => {
     try {
-      await axios.delete(`http://localhost:5000/api/bookings/${bookingToDelete._id}`);
+      await axios.delete(`${config.apiUrl}/api/bookings/${bookingToDelete._id}`);
       toast.success('Booking cancelled successfully');
       setDeleteDialogOpen(false);
       setBookingToDelete(null);
