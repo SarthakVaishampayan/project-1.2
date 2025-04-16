@@ -2,6 +2,27 @@
 
 A full-stack application for booking gaming parlours and consoles, built with React and Node.js.
 
+## Project Structure
+
+```
+gaming-parlour-booking/
+├── backend/           # Node.js/Express backend
+│   ├── src/          # Source code
+│   ├── routes/       # API routes
+│   ├── models/       # Database models
+│   ├── middleware/   # Custom middleware
+│   └── package.json  # Backend dependencies
+│
+├── frontend/         # React frontend
+│   ├── src/          # Source code
+│   ├── public/       # Static files
+│   └── package.json  # Frontend dependencies
+│
+├── .gitignore        # Git ignore rules
+├── package.json      # Root project configuration
+└── README.md         # Project documentation
+```
+
 ## Features
 
 - User authentication (register, login, logout)
@@ -43,35 +64,20 @@ git clone https://github.com/yourusername/gaming-parlour-booking.git
 cd gaming-parlour-booking
 ```
 
-2. Install backend dependencies
+2. Install all dependencies (both frontend and backend)
 ```bash
-cd backend
-npm install
+npm run install-all
 ```
 
-3. Install frontend dependencies
-```bash
-cd ../frontend
-npm install
-```
-
-4. Set up environment variables
+3. Set up environment variables
    - Copy `.env.example` to `.env` in both frontend and backend directories
    - Update the values in `.env` files with your configuration
 
-5. Start the development servers
-
-Backend:
+4. Start the development servers
 ```bash
-cd backend
-npm run dev
-```
-
-Frontend:
-```bash
-cd frontend
 npm start
 ```
+This will start both the frontend and backend servers concurrently.
 
 ## Environment Variables
 
@@ -88,6 +94,16 @@ FRONTEND_URL=http://localhost:3000
 ```
 REACT_APP_API_URL=http://localhost:5000
 ```
+
+## Available Scripts
+
+In the project root directory, you can run:
+
+- `npm run install-all`: Install all dependencies for both frontend and backend
+- `npm start`: Start both frontend and backend development servers
+- `npm run build`: Build the frontend for production
+- `npm test`: Run tests for both frontend and backend
+- `npm run lint`: Run linter for both frontend and backend
 
 ## Deployment
 
