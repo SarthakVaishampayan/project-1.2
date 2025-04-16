@@ -1,8 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ThemeProvider, createTheme } from '@mui/material';
+import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { LoadingProvider } from './context/LoadingContext';
+import { AuthProvider } from './context/AuthContext';
 
 // Components
 import Navbar from './components/layout/Navbar';
@@ -100,20 +102,25 @@ const theme = createTheme({
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <Router>
-        <Navbar />
-        <ToastContainer position="top-right" autoClose={3000} />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/parlours" element={<PrivateRoute><GamingParlours /></PrivateRoute>} />
-          <Route path="/parlours/:parlourId/consoles" element={<PrivateRoute><ConsoleSelection /></PrivateRoute>} />
-          <Route path="/bookings" element={<PrivateRoute><Bookings /></PrivateRoute>} />
-          <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
-          <Route path="/devices" element={<PrivateRoute><DeviceList /></PrivateRoute>} />
-        </Routes>
-      </Router>
+      <CssBaseline />
+      <AuthProvider>
+        <LoadingProvider>
+          <Router>
+            <Navbar />
+            <ToastContainer position="top-right" autoClose={3000} />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/parlours" element={<PrivateRoute><GamingParlours /></PrivateRoute>} />
+              <Route path="/parlours/:parlourId/consoles" element={<PrivateRoute><ConsoleSelection /></PrivateRoute>} />
+              <Route path="/bookings" element={<PrivateRoute><Bookings /></PrivateRoute>} />
+              <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+              <Route path="/devices" element={<PrivateRoute><DeviceList /></PrivateRoute>} />
+            </Routes>
+          </Router>
+        </LoadingProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

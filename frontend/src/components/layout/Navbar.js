@@ -17,10 +17,12 @@ import MenuIcon from '@mui/icons-material/Menu';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useAuth } from '../../context/AuthContext';
+import { motion } from 'framer-motion';
+import usePageTransition from '../../hooks/usePageTransition';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const navigateWithLoading = usePageTransition();
   const [mobileMenuAnchor, setMobileMenuAnchor] = useState(null);
   const [userMenuAnchor, setUserMenuAnchor] = useState(null);
 
@@ -40,32 +42,63 @@ const Navbar = () => {
     setUserMenuAnchor(null);
   };
 
+  const handleNavigation = (path) => {
+    handleMobileMenuClose();
+    handleUserMenuClose();
+    navigateWithLoading(path);
+  };
+
   const handleLogout = () => {
     logout();
     handleUserMenuClose();
-    navigate('/login');
+    navigateWithLoading('/login');
   };
 
   return (
-    <AppBar position="sticky" sx={{ 
-      background: 'rgba(18, 18, 18, 0.8)',
-      backdropFilter: 'blur(10px)',
-      borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-    }}>
+    <AppBar 
+      position="sticky" 
+      sx={{ 
+        background: 'rgba(10, 10, 15, 0.95)',
+        backdropFilter: 'blur(10px)',
+        borderBottom: '1px solid rgba(124, 77, 255, 0.2)',
+        boxShadow: '0 4px 30px rgba(0, 0, 0, 0.5)',
+      }}
+    >
       <Container maxWidth="xl">
-        <Toolbar disableGutters sx={{ 
-          display: 'flex', 
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          minHeight: { xs: 56, md: 64 }
-        }}>
+        <Toolbar disableGutters>
           {/* Logo for desktop */}
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <SportsEsportsIcon sx={{ 
-              display: { xs: 'none', md: 'flex' }, 
-              mr: 1,
-              fontSize: { md: 32, lg: 40 }
-            }} />
+          <Box 
+            onClick={() => handleNavigation('/')}
+            sx={{ 
+              cursor: 'pointer',
+              display: 'flex', 
+              alignItems: 'center',
+              position: 'relative',
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                bottom: -2,
+                left: 0,
+                width: '100%',
+                height: '2px',
+                background: 'linear-gradient(90deg, #7c4dff, #ff4081)',
+                opacity: 0,
+                transition: 'opacity 0.3s ease',
+              },
+              '&:hover::after': {
+                opacity: 1,
+              },
+            }}
+          >
+            <SportsEsportsIcon 
+              sx={{ 
+                display: { xs: 'none', md: 'flex' }, 
+                mr: 1,
+                fontSize: { md: 32, lg: 40 },
+                color: '#7c4dff',
+                filter: 'drop-shadow(0 0 8px rgba(124, 77, 255, 0.5))',
+              }} 
+            />
             <Typography
               variant="h6"
               noWrap
@@ -74,138 +107,21 @@ const Navbar = () => {
               sx={{
                 mr: 2,
                 display: { xs: 'none', md: 'flex' },
-                fontWeight: 700,
-                letterSpacing: '.1rem',
+                fontFamily: 'monospace',
+                fontWeight: 800,
+                letterSpacing: '.2rem',
                 color: 'inherit',
                 textDecoration: 'none',
                 background: 'linear-gradient(45deg, #7c4dff 30%, #ff4081 90%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
-                fontSize: { md: '1.25rem', lg: '1.5rem' }
-              }}
-              className="heading-font"
-            >
-              BookYourGAME
-            </Typography>
-          </Box>
-
-          {/* Mobile menu */}
-          <Box sx={{ 
-            display: { xs: 'flex', md: 'none' },
-            alignItems: 'center',
-            gap: 1
-          }}>
-            <IconButton
-              size="large"
-              aria-label="menu"
-              aria-controls="mobile-menu"
-              aria-haspopup="true"
-              onClick={handleMobileMenuOpen}
-              color="inherit"
-              sx={{ 
-                p: 1,
+                fontSize: { md: '1.25rem', lg: '1.5rem' },
+                textShadow: '0 0 20px rgba(124, 77, 255, 0.3)',
+                transition: 'transform 0.3s ease',
                 '&:hover': {
-                  background: 'rgba(255, 255, 255, 0.1)'
-                }
-              }}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="mobile-menu"
-              anchorEl={mobileMenuAnchor}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              open={Boolean(mobileMenuAnchor)}
-              onClose={handleMobileMenuClose}
-              sx={{
-                display: { xs: 'block', md: 'none' },
-                '& .MuiPaper-root': {
-                  background: 'rgba(30, 30, 30, 0.95)',
-                  backdropFilter: 'blur(10px)',
-                  minWidth: '200px',
-                  mt: 1,
-                  border: '1px solid rgba(124, 77, 255, 0.2)',
-                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+                  transform: 'scale(1.05)',
                 },
-                '& .MuiMenuItem-root': {
-                  py: 1.5,
-                  px: 3,
-                  color: 'white',
-                  '&:hover': {
-                    background: 'rgba(124, 77, 255, 0.1)',
-                    color: '#7c4dff'
-                  }
-                }
               }}
-            >
-              <MenuItem 
-                component={RouterLink} 
-                to="/" 
-                onClick={handleMobileMenuClose}
-                sx={{
-                  borderBottom: '1px solid rgba(124, 77, 255, 0.2)',
-                }}
-              >
-                Home
-              </MenuItem>
-              <MenuItem 
-                component={RouterLink} 
-                to="/parlours" 
-                onClick={handleMobileMenuClose}
-                sx={{
-                  borderBottom: '1px solid rgba(124, 77, 255, 0.2)',
-                }}
-              >
-                Gaming Parlours
-              </MenuItem>
-              {user && (
-                <MenuItem 
-                  component={RouterLink} 
-                  to="/bookings" 
-                  onClick={handleMobileMenuClose}
-                >
-                  My Bookings
-                </MenuItem>
-              )}
-            </Menu>
-          </Box>
-
-          {/* Logo for mobile */}
-          <Box sx={{ 
-            display: { xs: 'flex', md: 'none' },
-            alignItems: 'center',
-            flexGrow: 1,
-            justifyContent: 'center'
-          }}>
-            <SportsEsportsIcon sx={{ 
-              display: { xs: 'flex', md: 'none' }, 
-              mr: 1,
-              fontSize: 24
-            }} />
-            <Typography
-              variant="h5"
-              noWrap
-              component={RouterLink}
-              to="/"
-              sx={{
-                fontWeight: 700,
-                letterSpacing: '.1rem',
-                color: 'inherit',
-                textDecoration: 'none',
-                background: 'linear-gradient(45deg, #7c4dff 30%, #ff4081 90%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                fontSize: '1.25rem'
-              }}
-              className="heading-font"
             >
               BookYourGAME
             </Typography>
@@ -216,50 +132,143 @@ const Navbar = () => {
             flexGrow: 1, 
             display: { xs: 'none', md: 'flex' }, 
             justifyContent: 'center',
-            gap: 2
+            gap: 3
           }}>
             <Button
-              component={RouterLink}
-              to="/"
+              onClick={() => handleNavigation('/')}
               sx={{
                 color: 'white',
-                '&:hover': {
-                  color: 'primary.light',
-                  background: 'rgba(255, 255, 255, 0.1)'
+                position: 'relative',
+                overflow: 'hidden',
+                px: 3,
+                py: 1,
+                transition: 'all 0.3s ease',
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  background: 'linear-gradient(45deg, #7c4dff 30%, #ff4081 90%)',
+                  opacity: 0,
+                  transition: 'opacity 0.3s ease',
+                  zIndex: -1,
                 },
-                px: 2,
-                py: 1
+                '&:hover': {
+                  color: 'white',
+                  transform: 'translateY(-2px)',
+                  '&::before': {
+                    opacity: 0.1,
+                  },
+                },
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: 0,
+                  left: '50%',
+                  width: 0,
+                  height: '2px',
+                  background: 'linear-gradient(90deg, #7c4dff, #ff4081)',
+                  transition: 'all 0.3s ease',
+                },
+                '&:hover::after': {
+                  width: '100%',
+                  left: 0,
+                },
               }}
             >
               Home
             </Button>
             <Button
-              component={RouterLink}
-              to="/parlours"
+              onClick={() => handleNavigation('/parlours')}
               sx={{
                 color: 'white',
-                '&:hover': {
-                  color: 'primary.light',
-                  background: 'rgba(255, 255, 255, 0.1)'
+                position: 'relative',
+                overflow: 'hidden',
+                px: 3,
+                py: 1,
+                transition: 'all 0.3s ease',
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  background: 'linear-gradient(45deg, #7c4dff 30%, #ff4081 90%)',
+                  opacity: 0,
+                  transition: 'opacity 0.3s ease',
+                  zIndex: -1,
                 },
-                px: 2,
-                py: 1
+                '&:hover': {
+                  color: 'white',
+                  transform: 'translateY(-2px)',
+                  '&::before': {
+                    opacity: 0.1,
+                  },
+                },
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: 0,
+                  left: '50%',
+                  width: 0,
+                  height: '2px',
+                  background: 'linear-gradient(90deg, #7c4dff, #ff4081)',
+                  transition: 'all 0.3s ease',
+                },
+                '&:hover::after': {
+                  width: '100%',
+                  left: 0,
+                },
               }}
             >
               Gaming Parlours
             </Button>
             {user && (
               <Button
-                component={RouterLink}
-                to="/bookings"
+                onClick={() => handleNavigation('/bookings')}
                 sx={{
                   color: 'white',
-                  '&:hover': {
-                    color: 'primary.light',
-                    background: 'rgba(255, 255, 255, 0.1)'
+                  position: 'relative',
+                  overflow: 'hidden',
+                  px: 3,
+                  py: 1,
+                  transition: 'all 0.3s ease',
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    background: 'linear-gradient(45deg, #7c4dff 30%, #ff4081 90%)',
+                    opacity: 0,
+                    transition: 'opacity 0.3s ease',
+                    zIndex: -1,
                   },
-                  px: 2,
-                  py: 1
+                  '&:hover': {
+                    color: 'white',
+                    transform: 'translateY(-2px)',
+                    '&::before': {
+                      opacity: 0.1,
+                    },
+                  },
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    bottom: 0,
+                    left: '50%',
+                    width: 0,
+                    height: '2px',
+                    background: 'linear-gradient(90deg, #7c4dff, #ff4081)',
+                    transition: 'all 0.3s ease',
+                  },
+                  '&:hover::after': {
+                    width: '100%',
+                    left: 0,
+                  },
                 }}
               >
                 My Bookings
@@ -268,49 +277,66 @@ const Navbar = () => {
           </Box>
 
           {/* User menu */}
-          <Box sx={{ 
-            display: 'flex', 
-            alignItems: 'center',
-            gap: 1
-          }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             {user ? (
               <>
                 <Tooltip title="Open settings">
                   <IconButton 
-                    onClick={handleUserMenuOpen} 
-                    sx={{ 
-                      p: 0,
+                    onClick={handleUserMenuOpen}
+                    sx={{
+                      p: 1,
+                      border: '1px solid rgba(124, 77, 255, 0.3)',
+                      background: 'rgba(124, 77, 255, 0.1)',
+                      transition: 'all 0.3s ease',
                       '&:hover': {
-                        background: 'rgba(255, 255, 255, 0.1)'
-                      }
+                        background: 'rgba(124, 77, 255, 0.2)',
+                        transform: 'scale(1.05)',
+                      },
                     }}
                   >
                     <Avatar 
                       sx={{ 
-                        bgcolor: 'secondary.main',
+                        bgcolor: 'transparent',
                         width: { xs: 32, md: 40 },
-                        height: { xs: 32, md: 40 }
+                        height: { xs: 32, md: 40 },
+                        border: '2px solid #7c4dff',
+                        boxShadow: '0 0 10px rgba(124, 77, 255, 0.5)',
                       }}
                     >
-                      <AccountCircleIcon />
+                      <AccountCircleIcon sx={{ color: '#7c4dff' }} />
                     </Avatar>
                   </IconButton>
                 </Tooltip>
                 <Menu
-                  sx={{ 
+                  sx={{
                     mt: '45px',
                     '& .MuiPaper-root': {
-                      background: 'rgba(30, 30, 30, 0.95)',
+                      background: 'rgba(10, 10, 15, 0.95)',
                       backdropFilter: 'blur(10px)',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
-                      minWidth: '200px',
+                      border: '1px solid rgba(124, 77, 255, 0.2)',
+                      boxShadow: '0 4px 30px rgba(0, 0, 0, 0.5)',
+                      overflow: 'hidden',
                       '& .MuiMenuItem-root': {
                         color: 'white',
-                        py: 1.5,
-                        px: 3,
+                        transition: 'all 0.3s ease',
+                        position: 'relative',
+                        '&::before': {
+                          content: '""',
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: '100%',
+                          background: 'linear-gradient(45deg, #7c4dff 30%, #ff4081 90%)',
+                          opacity: 0,
+                          transition: 'opacity 0.3s ease',
+                          zIndex: -1,
+                        },
                         '&:hover': {
-                          background: 'rgba(255, 255, 255, 0.1)',
+                          background: 'transparent',
+                          '&::before': {
+                            opacity: 0.1,
+                          },
                         },
                       },
                     },
@@ -333,10 +359,17 @@ const Navbar = () => {
                     component={RouterLink} 
                     to="/profile" 
                     onClick={handleUserMenuClose}
+                    sx={{
+                      borderBottom: '1px solid rgba(124, 77, 255, 0.2)',
+                      py: 1.5,
+                    }}
                   >
                     Profile
                   </MenuItem>
-                  <MenuItem onClick={handleLogout}>
+                  <MenuItem 
+                    onClick={handleLogout}
+                    sx={{ py: 1.5 }}
+                  >
                     Logout
                   </MenuItem>
                 </Menu>
@@ -344,31 +377,36 @@ const Navbar = () => {
             ) : (
               <>
                 <Button
-                  color="inherit"
                   component={RouterLink}
                   to="/login"
-                  sx={{ 
+                  sx={{
+                    color: 'white',
+                    px: 3,
+                    py: 1,
+                    border: '1px solid rgba(124, 77, 255, 0.3)',
+                    background: 'rgba(124, 77, 255, 0.1)',
+                    transition: 'all 0.3s ease',
                     '&:hover': {
-                      color: 'primary.light',
-                      background: 'rgba(255, 255, 255, 0.1)'
+                      background: 'rgba(124, 77, 255, 0.2)',
+                      transform: 'translateY(-2px)',
                     },
-                    px: 2,
-                    py: 1
                   }}
                 >
                   Login
                 </Button>
                 <Button
-                  color="inherit"
                   component={RouterLink}
                   to="/register"
-                  sx={{ 
+                  sx={{
+                    px: 3,
+                    py: 1,
+                    background: 'linear-gradient(45deg, #7c4dff 30%, #ff4081 90%)',
+                    color: 'white',
+                    transition: 'all 0.3s ease',
                     '&:hover': {
-                      color: 'primary.light',
-                      background: 'rgba(255, 255, 255, 0.1)'
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 5px 15px rgba(124, 77, 255, 0.4)',
                     },
-                    px: 2,
-                    py: 1
                   }}
                 >
                   Register
@@ -376,6 +414,79 @@ const Navbar = () => {
               </>
             )}
           </Box>
+
+          {/* Mobile menu button */}
+          <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+            <IconButton
+              size="large"
+              aria-label="menu"
+              onClick={handleMobileMenuOpen}
+              sx={{
+                color: 'white',
+                border: '1px solid rgba(124, 77, 255, 0.3)',
+                background: 'rgba(124, 77, 255, 0.1)',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  background: 'rgba(124, 77, 255, 0.2)',
+                },
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+          </Box>
+
+          {/* Mobile menu */}
+          <Menu
+            anchorEl={mobileMenuAnchor}
+            open={Boolean(mobileMenuAnchor)}
+            onClose={handleMobileMenuClose}
+            sx={{
+              display: { xs: 'block', md: 'none' },
+              '& .MuiPaper-root': {
+                background: 'rgba(10, 10, 15, 0.95)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(124, 77, 255, 0.2)',
+                boxShadow: '0 4px 30px rgba(0, 0, 0, 0.5)',
+                minWidth: 200,
+                '& .MuiMenuItem-root': {
+                  color: 'white',
+                  transition: 'all 0.3s ease',
+                  py: 2,
+                  position: 'relative',
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    background: 'linear-gradient(45deg, #7c4dff 30%, #ff4081 90%)',
+                    opacity: 0,
+                    transition: 'opacity 0.3s ease',
+                    zIndex: -1,
+                  },
+                  '&:hover': {
+                    background: 'transparent',
+                    '&::before': {
+                      opacity: 0.1,
+                    },
+                  },
+                },
+              },
+            }}
+          >
+            <MenuItem onClick={() => handleNavigation('/')}>
+              Home
+            </MenuItem>
+            <MenuItem onClick={() => handleNavigation('/parlours')}>
+              Gaming Parlours
+            </MenuItem>
+            {user && (
+              <MenuItem onClick={() => handleNavigation('/bookings')}>
+                My Bookings
+              </MenuItem>
+            )}
+          </Menu>
         </Toolbar>
       </Container>
     </AppBar>
