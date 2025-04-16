@@ -5,11 +5,11 @@ const User = require('../models/User');
 // @access  Public
 exports.register = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { name, email, password } = req.body;
 
     // Create user
     const user = await User.create({
-      username,
+      username: name ,
       email,
       password
     });

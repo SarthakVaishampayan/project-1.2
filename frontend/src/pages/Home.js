@@ -343,9 +343,10 @@ const Home = () => {
   const fetchFeaturedParlours = async () => {
     try {
       const res = await axios.get(`${config.apiUrl}/api/parlours/featured`);
-      setFeaturedParlours(res.data);
+      setFeaturedParlours(res.data.data || []);
     } catch (err) {
       console.error('Failed to fetch featured parlours:', err);
+      setFeaturedParlours([]); 
     }
   };
 
@@ -1029,7 +1030,9 @@ const Home = () => {
 
           <Grid container spacing={4}>
             {featuredParlours.map((parlour, index) => (
-              <Grid item key={parlour._id} xs={12} md={4}>
+              //<Grid item key={parlour._id} xs={12} md={4}>
+              <Grid item key={parlour._id?.$oid || parlour._id} xs={12} md={4}>
+
                 <Zoom in={showConsoles} timeout={1000} style={{ transitionDelay: `${index * 200}ms` }}>
                   <Card
                     sx={{
