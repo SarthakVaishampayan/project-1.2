@@ -25,6 +25,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import config from '../config';
 
 const ConsoleSelection = () => {
   const { parlourId } = useParams();
@@ -38,7 +39,7 @@ const ConsoleSelection = () => {
 
   const fetchBookings = useCallback(async (bookingDate) => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/bookings/parlour/${parlourId}?date=${bookingDate}`);
+      const res = await axios.get(`${config.apiUrl}/api/bookings/parlour/${parlourId}?date=${bookingDate}`);
       setBookings(res.data.data || []);
     } catch (err) {
       console.error('Failed to fetch bookings:', err);
@@ -47,7 +48,7 @@ const ConsoleSelection = () => {
 
   const fetchDevices = useCallback(async (bookingDate) => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/devices/available/${parlourId}?date=${bookingDate}`);
+      const res = await axios.get(`${config.apiUrl}/api/devices/available/${parlourId}?date=${bookingDate}`);
       console.log('Devices response:', res.data.data); // Debug log
       
       // Process devices and their time slots
@@ -135,7 +136,7 @@ const ConsoleSelection = () => {
         consoleUnit: consoleUnit.consoleId
       };
 
-      await axios.post('http://localhost:5000/api/bookings', bookingPayload);
+      await axios.post(`${config.apiUrl}/api/bookings`, bookingPayload);
       toast.success('Booking successful!');
       
       // Refresh the data after successful booking
