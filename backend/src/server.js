@@ -19,6 +19,7 @@ app.use(express.json());
 // Enable CORS
 const allowedOrigins = [
   'http://localhost:3000',
+  'https://bookyourgame.vercel.app',
   'https://bookyourgame-git-main-sarthak-vaishampayans-projects.vercel.app',
   'https://bookyourgame-n2ynujvdb-sarthak-vaishampayans-projects.vercel.app'
 ];
