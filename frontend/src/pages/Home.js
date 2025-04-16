@@ -1045,7 +1045,6 @@ const Home = () => {
                         boxShadow: '0 12px 40px rgba(0, 0, 0, 0.4)',
                       },
                     }}
-                    onClick={() => navigate(`/parlours`)}
                   >
                     <CardMedia
                       component="img"
@@ -1071,9 +1070,9 @@ const Home = () => {
                         color="primary"
                         fullWidth
                         sx={{ mt: 2 }}
-                        onClick={() => navigate('/parlours')}
+                        onClick={() => navigate(`/parlours/${parlour._id}/consoles`)}
                       >
-                        View Details
+                        Book Now
                       </Button>
                     </CardContent>
                   </Card>
