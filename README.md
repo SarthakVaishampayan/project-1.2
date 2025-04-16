@@ -1,4 +1,4 @@
-# Gaming Parlour Booking System
+# Gaming Parlour Booking System created by Sarthak Vaishampayan
 
 A full-stack application for booking gaming parlours and consoles, built with React and Node.js.
 
